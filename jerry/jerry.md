@@ -36,3 +36,17 @@ From the nmap scan above, we can draw the following conclusions:
 We're dealing with only 1 port i.e. 8080 which is supposedly running a web server. Visiting the webpage on a browser, we see the following:
 
 ![webpage-1](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-1.png)
+
+On the homepage we can see "manager app" which could possibly lead us to the admin console. Clicking on that button we see that it requires us to enter a username and password:
+
+![webpage-2](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-2.png)
+
+Trying out random creds such as ```admin:admin``` lands us a 403 and we see the following:
+
+![webpage-3](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-3.png)
+
+On the 403 page, we see that for this version of Tomcat (7.0.88), the default admin credentials are ```admin:s3cret```. Trying this out on the admin login, we get access to the admin console:
+
+![webpage-5](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-5.png)
+
+The credentials worked and this is our most lucrative option. We can see that there is an option to deploy war files and execute them. WAR (Web Application Archive) files are basically files used to distribute a collection of JAR-files, JavaServer Pages, Java Servlets, Java classes, XML files, tag libraries, static web pages and other resources that together constitute a web application.
