@@ -34,3 +34,5 @@ From the nmap scan above, we can draw the following conclusions:
 ## Service enumeration
 
 We're dealing with only 1 port i.e. 8080 which is supposedly running a web server. Visiting the webpage on a browser, we see the following:
+
+![webpage-1](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-1.png)
