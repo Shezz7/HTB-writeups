@@ -51,7 +51,7 @@ On the 403 page, we see that for this version of Tomcat (7.0.88), the default ad
 
 The credentials worked and this is our most lucrative option. We can see that there is an option to deploy war files and execute them. WAR (Web Application Archive) files are basically files used to distribute a collection of JAR-files, JavaServer Pages, Java Servlets, Java classes, XML files, tag libraries, static web pages and other resources that together constitute a web application.
 
-Let's take a step back here and assume that we hadn't seen the default credentials on the 403. Having a quick look at how the login actually works. We fire up BurpSuite and turn intercept on to examine the traffic. Let's use the credentials blah:blah to see how it works:
+Let's take a step back here and assume that we hadn't seen the default credentials on the 403. Having a quick look at how the login actually works. We fire up BurpSuite and turn intercept on to examine the traffic. Let's use the credentials ```blah:blah``` to see how it works:
 
 ![burp-1](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/burp-1.png)
 
@@ -88,3 +88,17 @@ Concluding the service enumeration, its safe to assume that we have a very lucra
 1. Admin console exploitation
 2. Server software vulnerability assessment
 3. SSH bruteforce
+
+## Exploitation
+
+Before we get into actual exploitation, we can do some more enumeration on the admin console now that we have access to it. This is done to understand the nature of the machine so we gain more information on how to proceed with our exploit. Exploring the admin console, we discover the following:
+
+![webpage-6](https://github.com/Shezz7/HTB-writeups/blob/master/jerry/resources/webpage-6.png)
+
+We now have the following:
+
+- JVM Version: 1.8.0_171-b11
+- JVM Vendor: Oracle Corporation
+- OS Name: Windows Server 2012 R2
+- OS Version: 6.3
+- OS Architecture: amd64
