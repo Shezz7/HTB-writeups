@@ -59,3 +59,13 @@ The trailing hypen needs to go because we will post the hash in the field. To do
 kali@kali:~$ curl -s http://206.189.121.131:30299/ | grep h3 | cut -d '>' -f 4 | cut -f 1 -d '<' | md5sum | cut -d ' ' -f 1
 125428a5f9dc739151c926579c243e8d
 ```
+
+## Passing the MD5 hash
+
+To pass in the MD5 hash, we examine in the browser console what the POST looks like:
+
+![efff4](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/challenges/resources/efff4.png)
+
+The form data is submitted in through a variable called ```hash```. Therefore to pass in the hash we could use a curl similar to the following:
+
+```curl -d "hash=<computed_hash>" -X POST http://206.189.121.131:30299/```
