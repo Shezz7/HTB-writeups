@@ -17,3 +17,29 @@ Examining the initial request using the browser, we see the following:
 ![efff3](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/challenges/resources/efff3.png)
 
 A cookie is set in ```PHPSESSID``` which is the default identifier that PHP uses for cookies. While building our script we have to take this into account.
+
+## Getting the displayed string
+
+To get the displayed string we first do a simple curl:
+
+```console
+kali@kali:~$ curl http://206.189.121.131:30299/
+<html>
+<head>
+<title>emdee five for life</title>
+</head>
+<body style="background-color:powderblue;">
+<h1 align='center'>MD5 encrypt this string</h1><h3 align='center'>mHDGmix66zipSFZUAUM0</h3><center><form action="" method="post">
+<input type="text" name="hash" placeholder="MD5" align='center'></input>
+</br>
+<input type="submit" value="Submit"></input>
+</form></center>
+</body>
+</html>
+```
+We can then filter the string out using ```grep``` and ```curl```:
+
+```console
+kali@kali:~$ curl -s http://206.189.121.131:30299/ | grep h3 | cut -d '>' -f 4 | cut -f 1 -d '<'
+ObO2YLXyrOu0sw57HgC4
+```
