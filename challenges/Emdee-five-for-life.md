@@ -43,3 +43,19 @@ We can then filter the string out using ```grep``` and ```curl```:
 kali@kali:~$ curl -s http://206.189.121.131:30299/ | grep h3 | cut -d '>' -f 4 | cut -f 1 -d '<'
 ObO2YLXyrOu0sw57HgC4
 ```
+
+## Calculating the MD5 hash
+
+Now that we have the string, we can pipe this in to ```md5sum``` to get the md5 hash.
+
+```console
+kali@kali:~$ curl -s http://206.189.121.131:30299/ | grep h3 | cut -d '>' -f 4 | cut -f 1 -d '<' | md5sum
+021b1ae9acdfd446bdc204c3bc8f1df9  -
+```
+
+The trailing hypen needs to go because we will post the hash in the field. To do so we do the following:
+
+```console
+kali@kali:~$ curl -s http://206.189.121.131:30299/ | grep h3 | cut -d '>' -f 4 | cut -f 1 -d '<' | md5sum | cut -d ' ' -f 1
+125428a5f9dc739151c926579c243e8d
+```
