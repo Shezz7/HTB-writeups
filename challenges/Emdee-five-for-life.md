@@ -118,3 +118,46 @@ Hash is 111ca88e7a41017146f5c4cb8141cd20
 </body>
 </html>
 ```
+### Python equivalent
+
+```python
+import requests
+import hashlib
+from html.parser import HTMLParser
+
+url = "http://138.68.132.203:30921"
+
+
+# parse through the HTML response to get the string to MD5
+class MyHTMLParser(HTMLParser):
+
+    tag_found = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'h3':    # The string value has an h3 tag
+            self.tag_found = True
+
+    def handle_data(self, value):
+        if self.tag_found:
+            self.data = value
+
+    def handle_endtag(self, tag):
+        if tag == "h3":
+            self.tag_found = False
+
+
+response_get = requests.get(url)
+phpsessid = response_get.cookies['PHPSESSID']    # save the value of the cookie for the post
+
+parser = MyHTMLParser()
+parser.feed(response_get.text)    # get the string to be hashed
+input_string = parser.data
+print(input_string)
+
+hashed = hashlib.md5(input_string.encode()).hexdigest()
+
+cookie = {'PHPSESSID': phpsessid}
+response_post = requests.post(url, data={'hash': hashed}, cookies=cookie)
+
+print(response_post.text)
+```
