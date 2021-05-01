@@ -93,6 +93,7 @@ Now that we have the cookie, we need to send the post using this cookie. To do s
 
 HOST=206.189.121.131
 PORT=30299
+
 str=$(curl -c cookie.txt -s http://$HOST:$PORT/ | grep h3 | cut -d '>' -f 4 | cut -f 1 -d '<')
 echo "Got value $str"
 hash=$(echo -n "$str" | md5sum | cut -d ' ' -f 1)
