@@ -4,7 +4,7 @@ This is a short writeup of HTB Jerry, an easy Windows box
 
 ## Port scanning
 
-We start by scanning open ports on the box with nmap to see what we're dealing with. Running a TCP scan for all ports alongwith service/version detection, we get the following results:
+We start by scanning open ports on the box with nmap to see what we're dealing with. Running a TCP scan for all ports along with service/version detection, we get the following results:
 
 ```console
 kali@kali:~/Desktop/htb/jerry$ nmap -sT -sV 10.10.10.95 -A -p0-65535
