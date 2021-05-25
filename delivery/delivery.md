@@ -28,3 +28,11 @@ Note: Usually I like to run a UDP scan in the background just to cover all bases
 
 From the nmap scan above, we can draw the following conclusions:
 
+- Ports 22, 80 and 8065 are open
+- OpenSSH version is 7.9p1 Debian 10+deb10u2
+- Nginx 1.14.2 on port 80
+- OS: Linux
+
+## Service enumeration
+
+
