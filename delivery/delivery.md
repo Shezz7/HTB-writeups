@@ -35,4 +35,83 @@ From the nmap scan above, we can draw the following conclusions:
 
 ## Service enumeration
 
+There are only 3 ports to deal with here and since SSH is usually pretty reliable, we can start with port 80. Visiting the webpage on a browser, we see the following:
+
+![homepage-1](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/homepage-1.png)
+
+The website uses a template from HTML5 UP from https://html5up.net/. The "contact us" page looks like the following:
+
+![contact-us](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/contact-us.png)
+
+The helpdesk link directs to http://helpdesk.delivery.htb. Adding the subdomain to the hosts file we get:
+
+![homepage-2](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/homepage-2.png)
+
+It looks like the website uses osTicket, an open source ticketing system.
+
+Running a directory scan we get the following results:
+
+```console
+kali@kali:~/Desktop/htb/delivery$ gobuster dir -u http://helpdesk.delivery.htb -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 200
+===============================================================
+Gobuster v3.0.1
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
+===============================================================
+[+] Url:            http://helpdesk.delivery.htb
+[+] Threads:        200
+[+] Wordlist:       /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+[+] Status codes:   200,204,301,302,307,401,403
+[+] User Agent:     gobuster/3.0.1
+[+] Timeout:        10s
+===============================================================
+2021/06/13 12:08:52 Starting gobuster
+===============================================================
+/images (Status: 301)
+/pages (Status: 301)
+/apps (Status: 301)
+/assets (Status: 301)
+/css (Status: 301)
+/includes (Status: 403)
+/js (Status: 301)
+/kb (Status: 301)
+/api (Status: 301)
+/include (Status: 403)
+/scp (Status: 301)
+/included (Status: 403)
+/includemanager (Status: 403)
+/includedcontent (Status: 403)
+===============================================================
+2021/06/13 12:10:10 Finished
+===============================================================
+```
+On port 8065 we have the following webpage:
+
+![mattermost-1](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/mattermost-1.png)
+
+Googling what Mattermost is we get the following:
+
+> Mattermost is an open source collaboration tool for developers. As an alternative to proprietary SaaS messaging, Mattermost brings all your team communication into one place, making it searchable and accessible anywhere. It’s written in Golang and React and runs as a production-ready Linux binary under an MIT license with either MySQL or Postgres.
+
+**Results:** 
+
+10.10.10.222:80 
+
+- Contact Us page which says that a user should register on a helpdesk to get access 
+- Link to Mattermost server 
+- HTML5up template used
+
+helpdesk.delivery.htb 
+
+- Support ticket system powered by osTicket (customer support software) 
+- Sign in page: http://helpdesk.delivery.htb/login.php  
+- Sign up page: http://helpdesk.delivery.htb/account.php?do=create 
+- Sign in page for agents: http://helpdesk.delivery.htb/scp/login.php 
+- Open new ticket: http://helpdesk.delivery.htb/open.php 
+- Check ticket status: http://helpdesk.delivery.htb/view.php 
+
+10.10.10.2222:8065 
+
+- Mattermost login 
+- Create account: http://10.10.10.222:8065/signup_email 
+- Forgot password: http://10.10.10.222:8065/reset_password
 
