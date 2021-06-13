@@ -115,3 +115,63 @@ helpdesk.delivery.htb
 - Create account: http://10.10.10.222:8065/signup_email 
 - Forgot password: http://10.10.10.222:8065/reset_password
 
+## Exploitation
+
+### User
+
+We can try to create a ticket on the helpdesk and see what happens. Creating a ticket with random info:
+
+![create-ticket-1](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/create-ticket-1.png)
+
+The success message shows us a support email and a ticket ID.
+
+![create-ticket-2](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/create-ticket-2.png)
+
+Viewing our newly created ticket looks as follows:
+
+![create-ticket-3](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/create-ticket-3.png)
+
+We can now go to Mattermost and sign up with the support email and see what happens:
+
+![mattermost-2](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/mattermost-2.png)
+
+Once the account is successfully created, we get a prompt to verify the email:
+
+![mattermost-3](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/mattermost-3.png)
+
+Heading back to our ticketing system we can see that we have recieved a verification link in a comment:
+
+![create-ticket-4](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/create-ticket-4.png)
+
+Following that link we get:
+
+![mattermost-4](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/mattermost-4.png)
+
+Now we can sign in and we can get into what looks like the company's private channels:
+
+![mattermost-5](https://raw.githubusercontent.com/Shezz7/HTB-writeups/master/delivery/resources/mattermost-5.png)
+
+Here we see the following message:
+
+> *@developers Please update theme to the OSTicket before we go live. Credentials to the server are maildeliverer:Youve_G0t_Mail!*
+> *Also please create a program to help us stop re-using the same passwords everywhere.... Especially those that are a variant of "PleaseSubscribe!"*
+> *PleaseSubscribe! may not be in RockYou but if any hacker manages to get our hashes, they can use hashcat rules to easily crack all variations of common words or phrases.*
+
+Trying the credentials ```maildeliverer:Youve_G0t_Mail!``` with SSH we get a user shell:
+
+```console
+kali@kali:~/Desktop/htb/delivery$ ssh maildeliverer@10.10.10.222
+maildeliverer@10.10.10.222's password: 
+Linux Delivery 4.19.0-13-amd64 #1 SMP Debian 4.19.160-2 (2020-11-28) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Tue Jan  5 06:09:50 2021 from 10.10.14.5
+maildeliverer@Delivery:~$ whoami
+maildeliverer
+
+```
